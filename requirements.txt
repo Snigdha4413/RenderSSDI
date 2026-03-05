@@ -1,4 +1,7 @@
 flask
 numpy
 scipy
+
 gunicorn
+flask-sqlalchemy
+psycopg2-binary
