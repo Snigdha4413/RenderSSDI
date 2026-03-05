@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Two-Sample T-Test</h2>
+    <form method="POST">
+        Array A (comma separated): <input type="text" name="a" value="1,2,3,4,5"><br><br>
+        Array B (comma separated): <input type="text" name="b" value="2,4,6,8,10"><br><br>
+        Alternative: 
+        <select name="alt">
+            <option value="two-sided">two-sided</option>
+            <option value="greater">greater</option>
+            <option value="lesser">lesser</option>
+        </select><br><br>
+        <input type="submit" value="Calculate">
+    </form>
+    {% if result %}
+        <h3>Results:</h3>
+        <pre>{{ result }}</pre>
+    {% endif %}
+</body>
+</html>
