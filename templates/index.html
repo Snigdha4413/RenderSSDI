@@ -1,21 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iris Statistics Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+            font-size: 0.9rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #fafafa;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        .result-area {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label { font-weight: bold; }
+        
+        .footer-note {
+            font-size: 0.75rem;
+            text-align: center;
+            color: #777;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
 <body>
-    <h2>Two-Sample T-Test</h2>
+
+<div class="card">
+    <h2>Statistical Inference</h2>
+    <p style="text-align: center; font-size: 0.9rem; color: #666;">Two-Sample T-Test on Iris Dataset</p>
+    
     <form method="POST">
-        Array A (comma separated): <input type="text" name="a" value="1,2,3,4,5"><br><br>
-        Array B (comma separated): <input type="text" name="b" value="2,4,6,8,10"><br><br>
-        Alternative: 
-        <select name="alt">
-            <option value="two-sided">two-sided</option>
-            <option value="greater">greater</option>
-            <option value="lesser">lesser</option>
-        </select><br><br>
-        <input type="submit" value="Calculate">
+        <div class="form-group">
+            <label>First Variable</label>
+            <select name="column1" required>
+                {% for col in columns %}
+                    <option value="{{ col }}">{{ col }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Second Variable</label>
+            <select name="column2" required>
+                {% for col in columns %}
+                    <option value="{{ col }}">{{ col }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Tail Type</label>
+            <select name="alt">
+                <option value="two-sided">Two-Sided (≠)</option>
+                <option value="greater">Greater than (>)</option>
+                <option value="lesser">Less than (<)</option>
+            </select>
+        </div>
+
+        <button type="submit">Execute Analysis</button>
     </form>
+
     {% if result %}
-        <h3>Results:</h3>
-        <pre>{{ result }}</pre>
+        <div class="result-area">
+            <div class="stat-row">
+                <span class="stat-label">T-Statistic:</span>
+                <span>{{ result.t_cal }}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">P-Value:</span>
+                <span style="color: {{ 'red' if result.p_value < 0.05 else 'green' }};">
+                    {{ result.p_value }}
+                </span>
+            </div>
+            <p style="font-size: 0.8rem; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px;">
+                {% if result.p_value < 0.05 %}
+                    Significant evidence to reject the null hypothesis.
+                {% else %}
+                    Insufficient evidence to reject the null hypothesis.
+                {% endif %}
+            </p>
+        </div>
     {% endif %}
+
+    <div class="footer-note">
+        Powered by Render PostgreSQL & Python
+    </div>
+</div>
+
 </body>
 </html>
